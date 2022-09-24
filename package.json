@@ -4,15 +4,20 @@
   "version": "2.0.0",
   "description": "",
   "dependencies": {
+    "functional-game-utils": "^2.4.0",
     "parcel": "^2.0.0",
     "react": "^16.13.1",
-    "react-dom": "^16.13.1"
+    "react-dom": "^16.13.1",
+    "styled-components": "^5.3.5"
   },
-  "devDependencies": {},
   "scripts": {
     "start": "parcel src/index.html",
     "build": "parcel build src/index.html"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "@parcel/transformer-inline": "^2.7.0",
+    "@parcel/transformer-inline-string": "^2.7.0"
+  }
 }
