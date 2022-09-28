@@ -5,7 +5,7 @@
   "description": "",
   "dependencies": {
     "functional-game-utils": "^2.4.0",
-    "parcel": "^2.0.0",
+    "parcel": "^2.7.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "styled-components": "^5.3.5"
@@ -18,6 +18,7 @@
   "license": "ISC",
   "devDependencies": {
     "@parcel/transformer-inline": "^2.7.0",
-    "@parcel/transformer-inline-string": "^2.7.0"
+    "@parcel/transformer-inline-string": "^2.7.0",
+    "process": "^0.11.10"
   }
 }
