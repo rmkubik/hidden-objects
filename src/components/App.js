@@ -20,6 +20,12 @@ const GlobalStyle = createGlobalStyle`
   * {
     box-sizing: border-box;
   }
+
+  body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
 `;
 
 const parseLevel = (levelText) => {
@@ -104,7 +110,7 @@ const isLocationInShape = (location, shape) => {
 };
 
 const createFromLevel = (levelText) => {
-  const { metadata, targets, finders } = parseLevel(levelText);
+  const { metadata, targets } = parseLevel(levelText);
 
   return constructMatrix((location) => {
     let newTile = createTile(location);
@@ -122,12 +128,20 @@ const getFindersFromLevel = (levelText) => {
   return finders;
 };
 
+const getTargetsFromLevel = (levelText) => {
+  const { targets } = parseLevel(levelText);
+  return targets;
+};
+
 const initialTiles = createFromLevel(testLevel);
 const initialFinders = getFindersFromLevel(testLevel);
+const initialTargets = getTargetsFromLevel(testLevel);
 
 const App = () => {
   const [tiles, setTiles] = useState(initialTiles);
   const [finders, setFinders] = useState(initialFinders);
+  const [targets, setTargets] = useState(initialTargets);
+  const [actionCount, setActionCount] = useState(0);
   // 0, 1, 2, 3
   const [finderRotation, setFinderRotation] = useState(0);
   const [hoveredLocation, setHoveredLocation] = useState();
@@ -153,6 +167,7 @@ const App = () => {
 
   return (
     <>
+      <h1>Object Finder</h1>
       <Grid
         tiles={tiles}
         renderTile={(tile, location) => {
@@ -206,6 +221,7 @@ const App = () => {
                 const firstFinder = finders[0];
                 const newFinders = [...finders.slice(1), firstFinder];
 
+                setActionCount(actionCount + 1);
                 setTiles(newTiles);
                 setFinders(newFinders);
                 setFinderRotation(0);
@@ -216,18 +232,69 @@ const App = () => {
           );
         }}
       />
-      <ul>
-        {finders.map((finder, index) => {
-          return (
-            <li key={index}>
-              <Grid
-                tiles={finder.rows}
-                renderTile={(tile) => <div>{tile}</div>}
-              />
-            </li>
-          );
-        })}
-      </ul>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row",
+        }}
+      >
+        <div style={{ marginRight: "1rem" }}>
+          <h2>Your Pieces</h2>
+          <ul
+            style={{
+              listStyle: "none",
+              padding: 0,
+            }}
+          >
+            {finders.map((finder, index) => {
+              return (
+                <li key={index} style={{ borderBottom: "1px solid black" }}>
+                  <Grid
+                    tiles={finder.rows}
+                    renderTile={(tile) => <div>{tile}</div>}
+                  />
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+        <div style={{ marginRight: "1rem" }}>
+          <h2>Targets</h2>
+          <ul
+            style={{
+              listStyle: "none",
+              padding: 0,
+            }}
+          >
+            {targets.map((target, index) => {
+              return (
+                <li key={index} style={{ borderBottom: "1px solid black" }}>
+                  <Grid
+                    tiles={target.rows}
+                    renderTile={(tile) => <div>{tile}</div>}
+                  />
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+        <div>
+          <h2>Actions</h2>
+          <p>{actionCount}</p>
+        </div>
+      </div>
+      <div style={{ maxWidth: "800px", lineHeight: "1.5rem" }}>
+        <p>
+          Find all the hidden targets in the grid. Click on the grid to use your
+          pieces and reveal shapes on the grid. Cells with "?" are unrevealed,
+          "." are empty, and "X" have one of your targets in them.
+        </p>
+        <p>Press "R" to rotate your currently selected piece.</p>
+        <p>
+          Try to reveal all of your targets in the fewest actions possible. An
+          action is each time you use one of your pieces.
+        </p>
+      </div>
     </>
   );
 };
