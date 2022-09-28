@@ -125,6 +125,7 @@ const initialFinders = getFindersFromLevel(testLevel);
 const App = () => {
   const [tiles, setTiles] = useState(initialTiles);
   const [finders, setFinders] = useState(initialFinders);
+  const [hoveredLocation, setHoveredLocation] = useState();
 
   return (
     <>
@@ -139,9 +140,27 @@ const App = () => {
             icon = ".";
           }
 
+          let finderLocations = [];
+
+          if (hoveredLocation) {
+            finderLocations = getShapeLocations({
+              ...finders[0],
+              location: hoveredLocation,
+            });
+          }
+
+          const isHovered = finderLocations.some((finderLocation) =>
+            compareLocations(finderLocation, location)
+          );
+
           return (
             <div
+              style={{
+                border: isHovered ? "1px solid black" : "1px solid transparent",
+              }}
               key={JSON.stringify(location)}
+              onMouseMove={() => setHoveredLocation(location)}
+              onMouseLeave={() => setHoveredLocation()}
               onClick={() => {
                 const finderLocations = getShapeLocations({
                   ...finders[0],
