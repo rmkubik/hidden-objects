@@ -2,12 +2,15 @@ import {
   compareLocations,
   constructMatrix,
   getLocation,
+  MATRIX_ROTATION_DIRECTIONS,
+  rotateMatrix,
   updateMatrix,
 } from "functional-game-utils";
 import React, { useState } from "react";
 import { createGlobalStyle, ThemeProvider } from "styled-components";
 import Grid from "./Grid";
 import testLevel from "../../assets/levels/test.txt";
+import useKeyPress from "../hooks/useKeyPress";
 
 const theme = {
   tileSize: 32,
@@ -125,7 +128,28 @@ const initialFinders = getFindersFromLevel(testLevel);
 const App = () => {
   const [tiles, setTiles] = useState(initialTiles);
   const [finders, setFinders] = useState(initialFinders);
+  // 0, 1, 2, 3
+  const [finderRotation, setFinderRotation] = useState(0);
   const [hoveredLocation, setHoveredLocation] = useState();
+  useKeyPress({
+    KeyR: () => {
+      const newRotation = (finderRotation + 1) % 4;
+
+      setFinderRotation(newRotation);
+    },
+  });
+
+  let newRows = finders[0].rows;
+  for (let i = 0; i < finderRotation; i += 1) {
+    newRows = rotateMatrix(
+      { direction: MATRIX_ROTATION_DIRECTIONS.CLOCKWISE },
+      newRows
+    );
+  }
+
+  const currentFinder = {
+    rows: newRows,
+  };
 
   return (
     <>
@@ -144,7 +168,7 @@ const App = () => {
 
           if (hoveredLocation) {
             finderLocations = getShapeLocations({
-              ...finders[0],
+              ...currentFinder,
               location: hoveredLocation,
             });
           }
@@ -163,7 +187,7 @@ const App = () => {
               onMouseLeave={() => setHoveredLocation()}
               onClick={() => {
                 const finderLocations = getShapeLocations({
-                  ...finders[0],
+                  ...currentFinder,
                   location,
                 });
 
@@ -179,7 +203,12 @@ const App = () => {
                   );
                 });
 
+                const firstFinder = finders[0];
+                const newFinders = [...finders.slice(1), firstFinder];
+
                 setTiles(newTiles);
+                setFinders(newFinders);
+                setFinderRotation(0);
               }}
             >
               {icon}
